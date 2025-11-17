@@ -88,17 +88,13 @@ def submit_expense(conn: Connection, userid: int, amount: float, description: st
     #need to get approvals to work by using expense id
 
     cursor = conn.cursor()
-    try:
-        cursor.execute(submit_query)
-        eid = cursor.lastrowid
-        approvals_query = (("INSERT INTO APPROVALS ( expense_id, status ) "
-                            "SELECT EXPENSE.id, '%s' FROM EXPENSE WHERE EXPENSE.id = %f")
-                           % (DEFAULT_STATUS, eid))
-        cursor.execute(approvals_query)
-        conn.commit()
-    except Exception as e:
-        #todo: log error
-        print(e)
+    cursor.execute(submit_query)
+    eid = cursor.lastrowid
+    approvals_query = (("INSERT INTO APPROVALS ( expense_id, status ) "
+                        "SELECT EXPENSE.id, '%s' FROM EXPENSE WHERE EXPENSE.id = %f")
+                       % (DEFAULT_STATUS, eid))
+    cursor.execute(approvals_query)
+    conn.commit()
 
 #Employees can submit a request validated by hidden id to see all expenses and their status
 def view_submissions(conn: Connection, userid: int):
@@ -131,17 +127,21 @@ def edit_submission(conn: Connection, userid: int, expenseid: int, column: str, 
     #submit expense id to change, validate pending in approvals
     edit_query = (("UPDATE EXPENSE SET %s = %s "
                    "FROM EXPENSE AS t1 INNER JOIN APPROVALS as t2 "
-                  "WHERE t2.status = '%s' AND t1.user_id = %d AND t1.id = %d")
+                  "WHERE t2.status = '%s' AND t1.user_id = %d AND t1.id = %d "
+                   "RETURNING *")
                   %(column, data, DEFAULT_STATUS, userid, expenseid))
     cursor = conn.cursor()
     cursor.execute(edit_query)
+    row = cursor.fetchall()
+    if not row:
+        raise KeyError("Entry not found, update not passed")
     conn.commit()
 
 
 
 def delete_submission(conn: Connection, userid: int, expenseid: int):
     #submit expense id to change, validate pending in approvals
-    delete_query = ("DELETE FROM EXPENSE WHERE id=%d AND user_id=%d"%(expenseid, userid))
+    delete_query = ("DELETE FROM EXPENSE WHERE id=%d AND user_id=%d RETURNING *"%(expenseid, userid))
     cursor = conn.cursor()
     cursor.execute(delete_query)
     conn.commit()

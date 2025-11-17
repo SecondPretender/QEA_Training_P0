@@ -119,7 +119,10 @@ if __name__ == "__main__":
                     continue
             else:
                 changed = "'" + changed + "'"
-            dbfunc.edit_submission(conn, curr_id, target_id, column, changed)
+            try:
+                dbfunc.edit_submission(conn, curr_id, target_id, column, changed)
+            except KeyError as e:
+                print(e)
         elif ui_inp.upper() == "Q":
                 sys.exit()
 
