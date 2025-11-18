@@ -1,10 +1,11 @@
 import sqlite3
 import sys
 from sqlite3 import Connection
+import logging
 
 DB_NAME = 'database/expense.db'
 DEFAULT_STATUS = 'pending'
-LOGFILE = 'logging/log.txt'
+LOGFILE = 'logdir/log.txt'
 
 
 
@@ -86,15 +87,18 @@ def submit_expense(conn: Connection, userid: int, amount: float, description: st
                     "VALUES (%d, %f, '%s', '%s') RETURNING id") %(userid, amount, description, date)
 
     #need to get approvals to work by using expense id
-
-    cursor = conn.cursor()
-    cursor.execute(submit_query)
-    eid = cursor.lastrowid
-    approvals_query = (("INSERT INTO APPROVALS ( expense_id, status ) "
-                        "SELECT EXPENSE.id, '%s' FROM EXPENSE WHERE EXPENSE.id = %f")
-                       % (DEFAULT_STATUS, eid))
-    cursor.execute(approvals_query)
-    conn.commit()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(submit_query)
+        eid = cursor.lastrowid
+        approvals_query = (("INSERT INTO APPROVALS ( expense_id, status ) "
+                            "SELECT EXPENSE.id, '%s' FROM EXPENSE WHERE EXPENSE.id = %f")
+                           % (DEFAULT_STATUS, eid))
+        cursor.execute(approvals_query)
+        conn.commit()
+    except Exception as e:
+        logger = logging.getLogger(__name__)
+        logger.error("Data submission to sql db failed")
 
 #Employees can submit a request validated by hidden id to see all expenses and their status
 def view_submissions(conn: Connection, userid: int):
@@ -121,12 +125,10 @@ def get_by_id(conn: Connection, userid: int, expenseid: int):
     return cursor.fetchone()
 
 
-#Employees validated by hidden id can edit or delete pending expenses
-#todo: and data passed in as string needs its own single quotes
 def edit_submission(conn: Connection, userid: int, expenseid: int, column: str, data: str):
     #submit expense id to change, validate pending in approvals
     edit_query = (("UPDATE EXPENSE SET %s = %s "
-                   "FROM EXPENSE AS t1 INNER JOIN APPROVALS as t2 "
+                   "FROM EXPENSE AS t1 INNER JOIN APPROVALS as t2 ON t2.expense_id = t1.id "
                   "WHERE t2.status = '%s' AND t1.user_id = %d AND t1.id = %d "
                    "RETURNING *")
                   %(column, data, DEFAULT_STATUS, userid, expenseid))
@@ -134,19 +136,26 @@ def edit_submission(conn: Connection, userid: int, expenseid: int, column: str, 
     cursor.execute(edit_query)
     row = cursor.fetchall()
     if not row:
-        raise KeyError("Entry not found, update not passed")
+        logger = logging.getLogger(__name__)
+        logger.info("No update entry found")
+        raise KeyError("Valid entry not found, update not passed")
     conn.commit()
 
 
 
 def delete_submission(conn: Connection, userid: int, expenseid: int):
-    #todo submit expense id to change, validate pending in approvals
-    delete_query = (("DELETE FROM EXPENSE AS t1 INNER JOIN APPROVALS as t2 "
-                  "WHERE t2.status = '%s' AND t1.user_id = %d AND t1.id = %d "
-                   "RETURNING *")
-                  %(DEFAULT_STATUS, userid, expenseid))
+    delete_query = (("DELETE FROM EXPENSE WHERE EXPENSE.id IN("
+                     "SELECT t1.id FROM EXPENSE "
+                     "AS t1 LEFT JOIN APPROVALS as t2 ON (t2.expense_id = t1.id) "
+                     "WHERE t2.status = '%s' AND t1.user_id = %d AND t1.id = %d )RETURNING *; ")
+                    % (DEFAULT_STATUS, userid, expenseid))
     cursor = conn.cursor()
     cursor.execute(delete_query)
+    row = cursor.fetchall()
+    if not row:
+        logger = logging.getLogger(__name__)
+        logger.warning("No deletion entry found")
+        raise KeyError("Valid entry not found, nothing deleted")
     conn.commit()
     return None
 
@@ -157,8 +166,6 @@ def view_non_pending(conn: Connection, userid: int):
     view_query = (
     "SELECT * FROM EXPENSE INNER JOIN APPROVALS ON APPROVALS.expense_id=EXPENSE.id "
     "WHERE EXPENSE.user_id=%d AND NOT APPROVALS.status='%s'" %(userid, DEFAULT_STATUS))
-    #todo: get expense ids based on user ids and feed them all into approvals
-    # return both description from expense and status from approvals
     cursor.execute(view_query)
     return cursor.fetchall()
 
@@ -168,8 +175,10 @@ def view_non_pending(conn: Connection, userid: int):
 def get_connection():
     try:
         conn = sqlite3.connect(DB_NAME)
-    except Exception:
+    except Exception as e:
         #todo: log error
+        logger = logging.getLogger(__name__)
+        logger.critical(f"SQLite connection failed: {e}")
         print("Something went wrong")
         sys.exit()
     return conn

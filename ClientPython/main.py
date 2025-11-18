@@ -1,6 +1,7 @@
 import sqlite3
 import sys
 from datetime import datetime
+import logging
 
 import dbfunc
 
@@ -23,6 +24,7 @@ def validate_date(date_string):
         datetime.strptime(date_string, dformat)
         return True
     except ValueError:
+        logger.debug("User entered invalid date")
         return False
 def view_transactions(tr_ls: []):
     for i in tr_ls:
@@ -38,6 +40,7 @@ def to_float(input):
     try:
         ret = float(input)
     except Exception as e:
+        logger.debug("Invalid floating point cast caught")
         print("Float cast failed")
         return None
     return ret
@@ -48,6 +51,9 @@ def to_float(input):
 
 if __name__ == "__main__":
     conn = sqlite3.connect(dbfunc.DB_NAME)
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(filename=dbfunc.LOGFILE, level=logging.INFO)
+
 
     print("Welcome to the Employee Expenses Portal")
     ui_inp = " "
@@ -61,8 +67,10 @@ if __name__ == "__main__":
             pword = input("Enter Password: ")
             result = dbfunc.login(username, pword, conn)
             if result == None:
+                logger.info(f"User failed login attempt with username {username}")
                 print("Login failed")
             else:
+                logger.info("Successful login")
                 print("Login was successful")
                 curr_id = result[0]
                 print("Welcome", result[1])
@@ -72,6 +80,7 @@ if __name__ == "__main__":
             username = input("Enter new Username: ")
             pword = input("Enter new Password: ")
             dbfunc.new_usr(username, pword, conn)
+            logger.info(f"new account created: {username}")
         elif ui_inp.upper() == "Q":
             print("Thank you for using the Expense Portal")
             sys.exit()
@@ -86,9 +95,10 @@ if __name__ == "__main__":
                        "--Q to quit\n")
         if ui_inp.upper() == "V":
             exp_view = dbfunc.view_submissions(conn, curr_id)
+            logger.info("User ran the view method")
             view_transactions(exp_view)
         elif ui_inp.upper() == "E":
-            print("Adding")
+
             date = input("Enter the date in YYYY:MM:DD format\n")
             if not (validate_date(date)):
                 print("Invalid date")
@@ -99,22 +109,29 @@ if __name__ == "__main__":
             if (amount == None):
                 continue
             category = input("Enter the description\n")
+            logger.info("User adding a new entry")
             dbfunc.submit_expense(conn, curr_id, amount, category, date)
         elif ui_inp.upper() == "D":
             del_id = int(input("Enter the id of the expense to be removed: "))
-            dbfunc.delete_submission(conn, curr_id, del_id)
+            try:
+                dbfunc.delete_submission(conn, curr_id, del_id)
+                logger.info("User ran the deletion method")
+            except KeyError as e:
+                print(e)
         elif ui_inp.upper() == "A":
             exp_view = dbfunc.view_non_pending(conn, curr_id)
             view_transactions(exp_view)
         elif ui_inp.upper() == "X":
-            print("Editing:")
+            logger.info("User entered the editing function")
             try:
                 target_id = int(input("Enter the target id to edit\n"))
             except ValueError:
+                logger.debug("User entered an invalid id to edit")
                 print("invalid input")
                 continue
             result = dbfunc.get_by_id(conn, curr_id, target_id)
             if not result == None:
+
                 view_transaction(result)
             column = input("Which column should be edited\n")
             if column.upper() not in colSet:
@@ -132,11 +149,13 @@ if __name__ == "__main__":
             else:
                 changed = "'" + changed + "'"
             try:
+                logger.info("User ran the edit method")
                 dbfunc.edit_submission(conn, curr_id, target_id, column, changed)
             except KeyError as e:
                 print(e)
         elif ui_inp.upper() == "Q":
-                sys.exit()
+            logger.info("User quit the program")
+            sys.exit()
 
 
 

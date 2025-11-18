@@ -1,0 +1,7 @@
+
+INFO:__main__:Successful login
+INFO:__main__:User failed login attempt with username horse
+INFO:__main__:Successful login
+INFO:__main__:user viewed their transactions
+INFO:dbfunc:No update entry found
+INFO:__main__:user viewed their transactions
