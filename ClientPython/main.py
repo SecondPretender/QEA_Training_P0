@@ -34,6 +34,17 @@ def view_transaction(tr_ls):
         ret_str += f"Status:{i[4]}\n"
     print(ret_str)
 
+def to_float(input):
+    try:
+        ret = float(input)
+    except Exception as e:
+        print("Float cast failed")
+        return None
+    return ret
+
+
+
+
 
 if __name__ == "__main__":
     conn = sqlite3.connect(dbfunc.DB_NAME)
@@ -83,7 +94,8 @@ if __name__ == "__main__":
                 print("Invalid date")
                 continue
             amount = input("Enter the amount of the expense\n")
-            amount = float(amount)
+            #todo: add error catch to cast
+            amount = to_float(amount)
             if (amount == None):
                 continue
             category = input("Enter the description\n")
@@ -114,7 +126,7 @@ if __name__ == "__main__":
                     print("Invalid date")
                     continue
             if column.upper() == "AMOUNT":
-                changed = float(changed)
+                changed = to_float(changed)
                 if (changed == None):
                     continue
             else:

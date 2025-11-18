@@ -140,8 +140,11 @@ def edit_submission(conn: Connection, userid: int, expenseid: int, column: str, 
 
 
 def delete_submission(conn: Connection, userid: int, expenseid: int):
-    #submit expense id to change, validate pending in approvals
-    delete_query = ("DELETE FROM EXPENSE WHERE id=%d AND user_id=%d RETURNING *"%(expenseid, userid))
+    #todo submit expense id to change, validate pending in approvals
+    delete_query = (("DELETE FROM EXPENSE AS t1 INNER JOIN APPROVALS as t2 "
+                  "WHERE t2.status = '%s' AND t1.user_id = %d AND t1.id = %d "
+                   "RETURNING *")
+                  %(DEFAULT_STATUS, userid, expenseid))
     cursor = conn.cursor()
     cursor.execute(delete_query)
     conn.commit()

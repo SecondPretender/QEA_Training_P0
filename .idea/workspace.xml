@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="687eeee0-363c-45cc-b670-0688d7a14781" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/javaclient/DatabaseFunctions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ClientPython/database/expense.db" beforeDir="false" afterPath="$PROJECT_DIR$/ClientPython/database/expense.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ClientPython/dbfunc.py" beforeDir="false" afterPath="$PROJECT_DIR$/ClientPython/dbfunc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ClientPython/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/ClientPython/main.py" afterDir="false" />
     </list>
