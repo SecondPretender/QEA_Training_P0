@@ -24,7 +24,7 @@ def validate_date(date_string):
         datetime.strptime(date_string, dformat)
         return True
     except ValueError:
-        logger.debug("User entered invalid date")
+        logger.warning("User entered invalid date")
         return False
 def view_transactions(tr_ls: []):
     for i in tr_ls:
@@ -40,7 +40,7 @@ def to_float(input):
     try:
         ret = float(input)
     except Exception as e:
-        logger.debug("Invalid floating point cast caught")
+        logger.warning("Invalid floating point cast caught")
         print("Float cast failed")
         return None
     return ret

@@ -5,3 +5,12 @@ INFO:__main__:Successful login
 INFO:__main__:user viewed their transactions
 INFO:dbfunc:No update entry found
 INFO:__main__:user viewed their transactions
+INFO:__main__:Successful login
+INFO:__main__:User ran the view method
+INFO:__main__:User adding a new entry
+WARNING:dbfunc:No deletion entry found
+INFO:__main__:User ran the view method
+INFO:__main__:User ran the deletion method
+INFO:__main__:User ran the view method
+INFO:__main__:User quit the program
+INFO:__main__:User failed login attempt with username eee

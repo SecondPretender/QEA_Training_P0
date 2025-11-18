@@ -137,7 +137,7 @@ def edit_submission(conn: Connection, userid: int, expenseid: int, column: str, 
     row = cursor.fetchall()
     if not row:
         logger = logging.getLogger(__name__)
-        logger.info("No update entry found")
+        logger.warning("No update entry found")
         raise KeyError("Valid entry not found, update not passed")
     conn.commit()
 
