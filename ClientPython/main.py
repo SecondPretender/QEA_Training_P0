@@ -2,8 +2,8 @@ import sqlite3
 import sys
 from datetime import datetime
 import logging
-
 import dbfunc
+import format_util
 
 """
 
@@ -16,43 +16,49 @@ X    As an employee, I want to view the status of my submitted expenses so that 
 
 
 """
-colSet = {"DATE", "AMOUNT", "DESCRIPTION"}
-dformat = "%Y:%m:%d"
-#Recieves a string and validates that it matches the date format set above
-def validate_date(date_string):
-    try:
-        datetime.strptime(date_string, dformat)
-        return True
-    except ValueError:
-        logger.warning("User entered invalid date")
-        return False
-def view_transactions(tr_ls: []):
-    for i in tr_ls:
-        view_transaction(i)
-def view_transaction(tr_ls):
-    i = tr_ls
-    ret_str = (f"ID: {i[0]}\nAmount: {i[1]}\nDescription: {i[2]}\n Date:{i[3]}\n")
-    if len(i) >= 4:
-        ret_str += f"Status:{i[4]}\n"
-    print(ret_str)
+# colSet = {"DATE", "AMOUNT", "DESCRIPTION"}
+# dformat = "%Y:%m:%d"
+# #Recieves a string and validates that it matches the date format set above
+# def validate_date(date_string):
+#     try:
+#         datetime.strptime(date_string, dformat)
+#         return True
+#     except ValueError:
+#         logger.warning("User entered invalid date")
+#         return False
+# def view_transactions(tr_ls: []):
+#     for i in tr_ls:
+#         view_transaction(i)
+# def view_transaction(tr_ls):
+#     i = tr_ls
+#
+#     ret_str = (f"ID: {i[0]}\nAmount: {i[1]}\nDescription: {i[2]}\n Date:{i[3]}\n")
+#     if len(i) >= 4:
+#         ret_str += f"Status:{i[4]}\n"
+#     print(ret_str)
+#
+# def to_float(input):
+#     try:
+#         ret = float(input)
+#     except Exception as e:
+#         logger.warning("Invalid floating point cast caught")
+#         print("Float cast failed")
+#         return None
+#     return ret
 
-def to_float(input):
-    try:
-        ret = float(input)
-    except Exception as e:
-        logger.warning("Invalid floating point cast caught")
-        print("Float cast failed")
-        return None
-    return ret
 
 
-
-
+#TODO:
+# update file structure to be less insane:
+#   util file, split up db file, split up main text loop
+# add data validations:
+#   no negative values(or 0-1000), no future date, descriptions nonempty
+# tabular output/table view
 
 if __name__ == "__main__":
     conn = sqlite3.connect(dbfunc.DB_NAME)
     logger = logging.getLogger(__name__)
-    logging.basicConfig(filename=dbfunc.LOGFILE, level=logging.INFO)
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',filename=dbfunc.LOGFILE, level=logging.INFO)
 
 
     print("Welcome to the Employee Expenses Portal")
@@ -96,16 +102,16 @@ if __name__ == "__main__":
         if ui_inp.upper() == "V":
             exp_view = dbfunc.view_submissions(conn, curr_id)
             logger.info("User ran the view method")
-            view_transactions(exp_view)
+            format_util.view_transactions(exp_view)
         elif ui_inp.upper() == "E":
 
             date = input("Enter the date in YYYY:MM:DD format\n")
-            if not (validate_date(date)):
+            if not (format_util.validate_date(date)):
                 print("Invalid date")
                 continue
             amount = input("Enter the amount of the expense\n")
             #todo: add error catch to cast
-            amount = to_float(amount)
+            amount = format_util.to_float(amount)
             if (amount == None):
                 continue
             category = input("Enter the description\n")
@@ -120,7 +126,7 @@ if __name__ == "__main__":
                 print(e)
         elif ui_inp.upper() == "A":
             exp_view = dbfunc.view_non_pending(conn, curr_id)
-            view_transactions(exp_view)
+            format_util.view_transactions(exp_view)
         elif ui_inp.upper() == "X":
             logger.info("User entered the editing function")
             try:
@@ -132,18 +138,18 @@ if __name__ == "__main__":
             result = dbfunc.get_by_id(conn, curr_id, target_id)
             if not result == None:
 
-                view_transaction(result)
+                format_util.view_transaction(result)
             column = input("Which column should be edited\n")
-            if column.upper() not in colSet:
+            if column.upper() not in format_util.colSet:
                 print("Invalid column")
                 continue
             changed = input("Enter New value\n")
             if column.upper() == "DATE":
-                if not validate_date(changed):
+                if not format_util.validate_date(changed):
                     print("Invalid date")
                     continue
             if column.upper() == "AMOUNT":
-                changed = to_float(changed)
+                changed = format_util.to_float(changed)
                 if (changed == None):
                     continue
             else:

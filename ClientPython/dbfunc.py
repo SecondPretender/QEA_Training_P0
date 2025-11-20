@@ -7,8 +7,6 @@ DB_NAME = 'database/expense.db'
 DEFAULT_STATUS = 'pending'
 LOGFILE = 'logdir/log.txt'
 
-
-
 def initialize():
 
     user_query = """

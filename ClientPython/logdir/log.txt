@@ -1,16 +1,18 @@
-
-INFO:__main__:Successful login
-INFO:__main__:User failed login attempt with username horse
-INFO:__main__:Successful login
-INFO:__main__:user viewed their transactions
-INFO:dbfunc:No update entry found
-INFO:__main__:user viewed their transactions
-INFO:__main__:Successful login
-INFO:__main__:User ran the view method
-INFO:__main__:User adding a new entry
-WARNING:dbfunc:No deletion entry found
-INFO:__main__:User ran the view method
-INFO:__main__:User ran the deletion method
-INFO:__main__:User ran the view method
-INFO:__main__:User quit the program
-INFO:__main__:User failed login attempt with username eee
+2025-11-19 11:25:36,697 - INFO - Successful login
+2025-11-19 11:25:37,184 - INFO - User ran the view method
+2025-11-19 11:25:45,890 - WARNING - No deletion entry found
+2025-11-19 11:25:55,474 - INFO - User quit the program
+2025-11-19 15:37:28,358 - INFO - Successful login
+2025-11-19 15:37:30,431 - INFO - User ran the view method
+2025-11-19 15:38:01,487 - INFO - User adding a new entry
+2025-11-19 15:38:03,715 - INFO - User ran the view method
+2025-11-19 15:38:11,020 - WARNING - User entered invalid date
+2025-11-19 15:38:31,739 - INFO - User adding a new entry
+2025-11-19 15:38:58,266 - INFO - User ran the view method
+2025-11-19 15:39:05,783 - WARNING - No deletion entry found
+2025-11-19 15:39:12,108 - INFO - User entered the editing function
+2025-11-19 15:39:20,261 - INFO - User ran the edit method
+2025-11-19 15:39:20,265 - WARNING - No update entry found
+2025-11-19 15:39:33,842 - INFO - User ran the deletion method
+2025-11-19 15:39:36,314 - INFO - User ran the view method
+2025-11-19 15:39:48,035 - INFO - User quit the program
