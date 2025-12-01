@@ -4,6 +4,7 @@ from datetime import datetime
 import logging
 import dbfunc
 import format_util
+import mysql.connector
 
 """
 
@@ -56,7 +57,10 @@ X    As an employee, I want to view the status of my submitted expenses so that 
 # tabular output/table view
 
 if __name__ == "__main__":
-    conn = sqlite3.connect(dbfunc.DB_NAME)
+    # conn = sqlite3.connect(dbfunc.DB_NAME)
+    conn = mysql.connector.connect(host=dbfunc.server, user=dbfunc.user,
+                           password=dbfunc.password, database=dbfunc.database,
+                           port=dbfunc.port)
     logger = logging.getLogger(__name__)
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',filename=dbfunc.LOGFILE, level=logging.INFO)
 
@@ -111,7 +115,7 @@ if __name__ == "__main__":
                 continue
             amount = input("Enter the amount of the expense\n")
             #todo: add error catch to cast
-            amount = format_util.to_float(amount)
+            amount = format_util.validate_amount(amount)
             if (amount == None):
                 continue
             category = input("Enter the description\n")
@@ -137,8 +141,9 @@ if __name__ == "__main__":
                 continue
             result = dbfunc.get_by_id(conn, curr_id, target_id)
             if not result == None:
-
                 format_util.view_transaction(result)
+            else:
+                print("HUH")
             column = input("Which column should be edited\n")
             if column.upper() not in format_util.colSet:
                 print("Invalid column")
@@ -149,7 +154,7 @@ if __name__ == "__main__":
                     print("Invalid date")
                     continue
             if column.upper() == "AMOUNT":
-                changed = format_util.to_float(changed)
+                changed = format_util.validate_amount(changed)
                 if (changed == None):
                     continue
             else:

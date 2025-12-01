@@ -5,12 +5,18 @@ import logging
 
 DB_NAME = 'database/expense.db'
 DEFAULT_STATUS = 'pending'
+DEFAULT_ROLE = "user"
 LOGFILE = 'logdir/log.txt'
+server ="127.0.0.1"
+port = "3306"
+user = "root"
+password = "password"
+database = "ExpenseManager"
 
 def initialize():
 
     user_query = """
-            CREATE TABLE IF NOT EXISTS USER (
+            CREATE TABLE IF NOT EXISTS User (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username VARCHAR(255) NOT NULL,
                 password VARCHAR(255) NOT NULL,
@@ -18,28 +24,28 @@ def initialize():
             );
             """
     expense_query ="""
-            CREATE TABLE IF NOT EXISTS EXPENSE (
+            CREATE TABLE IF NOT EXISTS Expense (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 amount REAL NOT NULL,
                 description VARCHAR(255) NOT NULL,
                 date VARCHAR(255) NOT NULL,
                 user_id INTEGER,
-                FOREIGN KEY(user_id) REFERENCES USER(id) ON DELETE CASCADE
+                FOREIGN KEY(user_id) REFERENCES User(id) ON DELETE CASCADE
             );
             """
     approvals_query ="""
-        CREATE TABLE IF NOT EXISTS APPROVALS(
+        CREATE TABLE IF NOT EXISTS Approvals(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             status VARCHAR(255) NOT NULL,
             reviewer INT,
             comment VARCHAR(255),
             review_date VARCHAR(255),
             expense_id INTEGER,
-            FOREIGN KEY(expense_id) REFERENCES EXPENSE(id) ON DELETE CASCADE
+            FOREIGN KEY(expense_id) REFERENCES Expense(id) ON DELETE CASCADE
         );
         """
-    drop1 = """ DROP TABLE EXPENSE"""
-    drop2 = """ DROP TABLE APPROVALS"""
+    drop1 = """ DROP TABLE Expense"""
+    drop2 = """ DROP TABLE Approvals"""
     conn = get_connection()
     cursor = conn.cursor()
     # cursor.execute(drop1)
@@ -62,7 +68,7 @@ def initialize():
 
 #Employees can log in with credentials to securely access expense reports
 def login(username: str, password: str, conn):
-    log_query = "SELECT * FROM USER WHERE USERNAME = '%s' AND PASSWORD = '%s'"%(username, password)
+    log_query = "SELECT * FROM User WHERE UserNAME = '%s' AND PASSWORD = '%s'"%(username, password)
     cursor = conn.cursor()
     cursor.execute(log_query)
     result = cursor.fetchone()
@@ -72,7 +78,7 @@ def login(username: str, password: str, conn):
 
 #Users should be able to create an account
 def new_usr(username: str, password: str, conn):
-    add_query = "INSERT INTO USER (username, password, role) VALUES ('%s','%s', '%s')"%(username, password, DEFAULT_STATUS)
+    add_query = "INSERT INTO User (username, password, role) VALUES ('%s','%s', '%s')"%(username, password, DEFAULT_ROLE)
     cursor = conn.cursor()
     cursor.execute(add_query)
     conn.commit()
@@ -81,7 +87,7 @@ def new_usr(username: str, password: str, conn):
 
 #Employees can submit an expense validated by hidden id to add to the pending list
 def submit_expense(conn: Connection, userid: int, amount: float, description: str, date: str):
-    submit_query = ("INSERT INTO EXPENSE (user_id, amount, description, date) "
+    submit_query = ("INSERT INTO Expense (user_id, amount, description, date) "
                     "VALUES (%d, %f, '%s', '%s') RETURNING id") %(userid, amount, description, date)
 
     #need to get approvals to work by using expense id
@@ -89,8 +95,8 @@ def submit_expense(conn: Connection, userid: int, amount: float, description: st
         cursor = conn.cursor()
         cursor.execute(submit_query)
         eid = cursor.lastrowid
-        approvals_query = (("INSERT INTO APPROVALS ( expense_id, status ) "
-                            "SELECT EXPENSE.id, '%s' FROM EXPENSE WHERE EXPENSE.id = %f")
+        approvals_query = (("INSERT INTO Approvals ( expense_id, status ) "
+                            "SELECT Expense.id, '%s' FROM Expense WHERE Expense.id = %f")
                            % (DEFAULT_STATUS, eid))
         cursor.execute(approvals_query)
         conn.commit()
@@ -103,10 +109,10 @@ def view_submissions(conn: Connection, userid: int):
     cursor = conn.cursor()
 
     view_query = (
-    "SELECT EXPENSE.id, EXPENSE.amount, EXPENSE.description, EXPENSE.date, APPROVALS.status"
-    " FROM EXPENSE JOIN APPROVALS ON APPROVALS.expense_id=EXPENSE.id "
-    "WHERE EXPENSE.user_id=%d" %(userid))
-    # view_query = ("SELECT * FROM APPROVALS")
+    "SELECT Expense.id, Expense.amount, Expense.description, Expense.date, Approvals.status"
+    " FROM Expense JOIN Approvals ON Approvals.expense_id=EXPENSE.id "
+    "WHERE Expense.user_id=%d" %(userid))
+    # view_query = ("SELECT * FROM Approvals")
     cursor.execute(view_query)
     return cursor.fetchall()
 
@@ -114,21 +120,21 @@ def get_by_id(conn: Connection, userid: int, expenseid: int):
     cursor = conn.cursor()
 
     view_query = (
-            "SELECT EXPENSE.id, EXPENSE.amount, EXPENSE.description, EXPENSE.date"
-            " FROM EXPENSE JOIN APPROVALS ON APPROVALS.expense_id=EXPENSE.id "
-            "WHERE EXPENSE.user_id=%d AND EXPENSE.id=%d AND NOT APPROVALS.status='%s'"
+            "SELECT Expense.id, Expense.amount, Expense.description, Expense.date"
+            " FROM Expense JOIN Approvals ON Approvals.expense_id=EXPENSE.id "
+            "WHERE Expense.user_id=%d AND Expense.id=%d AND Approvals.status='%s'"
             % (userid, expenseid, DEFAULT_STATUS))
-    # view_query = ("SELECT * FROM APPROVALS")
+    # view_query = ("SELECT * FROM Approvals")
     cursor.execute(view_query)
     return cursor.fetchone()
 
 
 def edit_submission(conn: Connection, userid: int, expenseid: int, column: str, data: str):
     #submit expense id to change, validate pending in approvals
-    edit_query = (("UPDATE EXPENSE SET %s = %s "
-                   "FROM EXPENSE AS t1 INNER JOIN APPROVALS as t2 ON t2.expense_id = t1.id "
+    edit_query = (("UPDATE Expense SET %s = %s "
+                   "FROM Expense AS t1 JOIN Approvals as t2 ON t2.expense_id = t1.id "
                   "WHERE t2.status = '%s' AND t1.user_id = %d AND t1.id = %d "
-                   "RETURNING *")
+                   "RETURNING Expense.id")
                   %(column, data, DEFAULT_STATUS, userid, expenseid))
     cursor = conn.cursor()
     cursor.execute(edit_query)
@@ -137,14 +143,17 @@ def edit_submission(conn: Connection, userid: int, expenseid: int, column: str, 
         logger = logging.getLogger(__name__)
         logger.warning("No update entry found")
         raise KeyError("Valid entry not found, update not passed")
+    else:
+        for i in row:
+            print(i[0])
     conn.commit()
 
 
 
 def delete_submission(conn: Connection, userid: int, expenseid: int):
-    delete_query = (("DELETE FROM EXPENSE WHERE EXPENSE.id IN("
-                     "SELECT t1.id FROM EXPENSE "
-                     "AS t1 LEFT JOIN APPROVALS as t2 ON (t2.expense_id = t1.id) "
+    delete_query = (("DELETE FROM Expense WHERE Expense.id IN("
+                     "SELECT t1.id FROM Expense "
+                     "AS t1 LEFT JOIN Approvals as t2 ON (t2.expense_id = t1.id) "
                      "WHERE t2.status = '%s' AND t1.user_id = %d AND t1.id = %d )RETURNING *; ")
                     % (DEFAULT_STATUS, userid, expenseid))
     cursor = conn.cursor()
@@ -162,8 +171,8 @@ def view_non_pending(conn: Connection, userid: int):
     cursor = conn.cursor()
 
     view_query = (
-    "SELECT * FROM EXPENSE INNER JOIN APPROVALS ON APPROVALS.expense_id=EXPENSE.id "
-    "WHERE EXPENSE.user_id=%d AND NOT APPROVALS.status='%s'" %(userid, DEFAULT_STATUS))
+    "SELECT * FROM Expense INNER JOIN Approvals ON Approvals.expense_id=EXPENSE.id "
+    "WHERE Expense.user_id=%d AND NOT Approvals.status='%s'" %(userid, DEFAULT_STATUS))
     cursor.execute(view_query)
     return cursor.fetchall()
 
