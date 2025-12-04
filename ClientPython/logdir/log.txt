@@ -76,3 +76,27 @@
 2025-11-30 23:13:24,735 - INFO - new account created: Eggbert
 2025-11-30 23:13:29,648 - INFO - Successful login
 2025-11-30 23:13:37,376 - WARNING - Invalid amount entered, below 0
+2025-12-01 14:41:28,342 - INFO - User adding a new entry
+2025-12-01 14:41:28,354 - ERROR - Data submission to sql db failed
+2025-12-01 14:41:57,391 - INFO - Successful login
+2025-12-01 14:42:58,537 - INFO - Successful login
+2025-12-01 14:42:59,232 - INFO - User ran the view method
+2025-12-01 14:43:06,286 - INFO - User adding a new entry
+2025-12-01 14:43:06,290 - ERROR - Data submission to sql db failed
+2025-12-01 14:43:07,646 - INFO - User ran the view method
+2025-12-01 14:44:00,539 - INFO - Successful login
+2025-12-01 14:44:02,481 - INFO - User ran the view method
+2025-12-01 14:44:07,790 - INFO - User adding a new entry
+2025-12-01 14:44:07,795 - ERROR - Data submission to sql db failed
+2025-12-01 14:46:22,438 - INFO - Successful login
+2025-12-01 14:46:23,787 - INFO - User ran the view method
+2025-12-01 14:46:28,691 - INFO - User adding a new entry
+2025-12-01 14:46:28,694 - ERROR - Data submission to sql db failed
+2025-12-01 14:48:38,987 - INFO - Successful login
+2025-12-01 14:48:39,469 - INFO - User ran the view method
+2025-12-01 14:48:44,397 - INFO - User adding a new entry
+2025-12-01 14:48:45,740 - INFO - User ran the view method
+2025-12-01 14:50:05,679 - INFO - Successful login
+2025-12-01 14:50:06,316 - INFO - User ran the view method
+2025-12-01 14:50:59,544 - INFO - Successful login
+2025-12-01 14:51:00,839 - INFO - User ran the view method

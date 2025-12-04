@@ -4,6 +4,8 @@ import com.revature.p0.model.Manager;
 import com.revature.p0.service.LoginLoop;
 import com.revature.p0.service.UserLoop;
 import com.revature.p0.utils.ConnectionUtil;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import java.sql.*;
 
@@ -23,6 +25,10 @@ import java.sql.*;
 
 public class ExpenseManager {
 
+
+    private final static Logger LOGGER = Logger.getLogger(ExpenseManager.class.getName());
+
+
     public static void main(String[] args) {
 //        String DB_PATH = "jdbc:sqlite:../ClientPython/database/expense.db";
 
@@ -36,6 +42,7 @@ public class ExpenseManager {
                 do{
                     user = LoginLoop.hi(conn);
                     if(user == null){
+                        LOGGER.log(Level.WARNING, "Login failure");
                         System.out.println("Login failed");
                     }
 
@@ -48,6 +55,7 @@ public class ExpenseManager {
                 }while(result != -1);
             }
         } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "SQL Failure");
             System.out.println(e.getMessage());
         }
     }

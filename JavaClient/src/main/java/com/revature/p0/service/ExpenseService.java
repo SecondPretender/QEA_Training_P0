@@ -21,4 +21,9 @@ public class ExpenseService {
         ExpenseDAO ED = new ExpenseImp();
         return ED.retrieveValue(id);
     }
+
+    public static List<Expense> getByCategory(String cat){
+        ExpenseDAO ED = new ExpenseImp();
+        return ED.getCategory();
+    }
 }

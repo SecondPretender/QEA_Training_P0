@@ -3,10 +3,15 @@ package com.revature.p0.service;
 import com.revature.p0.model.Expense;
 import tech.tablesaw.api.*;
 
+
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class UserUtils {
-
+    static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy:MM:dd");
 
     public static Table TableFromExpense(List<Expense> e){
         Table t = Table.create("Expenses");
@@ -23,6 +28,39 @@ public class UserUtils {
 
         }
         return t;
+    }
+
+    public static boolean DateValid(String s){
+        try {
+            formatter.parse(s);
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+        return true;
+    }
+    public static String returnNow(){
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy:MM:dd");
+        return now.format(formatter);
+    }
+
+
+    public static double AvgExpense(List<Expense> expList){
+
+        double avg = 0.0;
+        int count = 0;
+
+        for(Expense exp:expList){
+            avg += exp.getAmount();
+            count += 1;
+        }
+        if(count <= 0){
+            return 0;
+        }
+        avg = avg/count;
+
+        return avg;
+
     }
 
 //    public static Table TableFromApproval(List<Approval> a){

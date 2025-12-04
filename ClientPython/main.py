@@ -89,8 +89,13 @@ if __name__ == "__main__":
         elif (ui_inp.upper() == "C"):
             username = input("Enter new Username: ")
             pword = input("Enter new Password: ")
-            dbfunc.new_usr(username, pword, conn)
-            logger.info(f"new account created: {username}")
+            happened = dbfunc.new_usr(username, pword, conn)
+            if(happened != None):
+                logger.info(f"new account created: {username}")
+                print("Account Created")
+            else:
+                print("Username already exists")
+                logger.info(f"Account creation failed")
         elif ui_inp.upper() == "Q":
             print("Thank you for using the Expense Portal")
             sys.exit()
@@ -143,7 +148,8 @@ if __name__ == "__main__":
             if not result == None:
                 format_util.view_transaction(result)
             else:
-                print("HUH")
+                print("No records found")
+                continue
             column = input("Which column should be edited\n")
             if column.upper() not in format_util.colSet:
                 print("Invalid column")

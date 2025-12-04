@@ -92,6 +92,35 @@ public class ExpenseImp implements ExpenseDAO{
         return expList;
     }
 
+    public List<Expense> getCategory(String cat){
+        conn = ConnectionUtil.dbConnection();
+        String selAll = "Select e.id, e.amount, e.description, e.date, u.username " +
+                "from Expense as e join User as u On e.user_id = u.id join Approvals as a " +
+                "On a.expense_id = e.id Where a.category LIKE ?";
+        Expense exp;
+        List<Expense> expList = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement=conn.prepareStatement(selAll);
+            preparedStatement.setString(1, cat);
+            ResultSet resultSet=preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                //id amount description date userId
+                exp = new Expense(
+                        resultSet.getInt(1),resultSet.getDouble(2),
+                        resultSet.getString(3), resultSet.getString(4),
+                        resultSet.getString(5));
+                expList.add(exp);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return expList;
+    }
+
+
+
     @Override
     public void insertData(Expense e) {
         conn = ConnectionUtil.dbConnection();

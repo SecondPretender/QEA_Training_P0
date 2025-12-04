@@ -50,12 +50,20 @@ public class ManagerImp implements ManagerDAO {
 
     //Create a new user
     @Override
-    public void insertData(Manager m) {
+    public void insertData(Manager m) throws RuntimeException{
         conn = ConnectionUtil.dbConnection();
+        String firstq = "SELECT * FROM User where username LIKE ?";
         String query = "INSERT INTO User (username, password, role)  VALUES(?, ?, 'Manager')";
 
         try {
-            PreparedStatement prep=conn.prepareStatement(query);
+            PreparedStatement prep=conn.prepareStatement(firstq);
+            prep.setString(1, m.getUsername());
+            prep.executeQuery();
+            ResultSet resultSet=prep.executeQuery();
+            if(resultSet.next()){
+                throw new RuntimeException("Username already exists");
+            }
+            prep=conn.prepareStatement(query);
             prep.setString(1, m.getUsername());
             prep.setString(2, m.getPassword());
             prep.execute();

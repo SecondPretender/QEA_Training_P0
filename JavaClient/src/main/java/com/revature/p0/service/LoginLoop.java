@@ -50,7 +50,10 @@ public class LoginLoop {
                 newm = mDB.login(uname, pword);
                 //todo: call db create user, then login
             } catch (SQLException e) {
+                return null;
+            }catch (Exception e){
                 System.out.println(e.getMessage());
+                return null;
             }
         }
         else{

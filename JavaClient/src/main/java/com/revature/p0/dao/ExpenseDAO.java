@@ -15,5 +15,7 @@ public interface ExpenseDAO {
 
     public void editData(int id, Expense e);
 
+    public List<Expense> getCategory();
+
 
 }
