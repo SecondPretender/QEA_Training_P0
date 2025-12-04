@@ -92,6 +92,7 @@ public class ExpenseImp implements ExpenseDAO{
         return expList;
     }
 
+    @Override
     public List<Expense> getCategory(String cat){
         conn = ConnectionUtil.dbConnection();
         String selAll = "Select e.id, e.amount, e.description, e.date, u.username " +

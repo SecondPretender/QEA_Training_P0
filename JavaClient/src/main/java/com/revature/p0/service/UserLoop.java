@@ -7,22 +7,41 @@ import com.revature.p0.model.Approval;
 import com.revature.p0.model.Expense;
 import tech.tablesaw.api.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
 public class UserLoop {
 
 
-    private final static Logger LOGGER = Logger.getLogger(UserLoop.class.getName());
 
+    static Logger logger = Logger.getLogger("MyLog");
+    private static FileHandler fh;
 
     public static int inputLoop(int manid){
+
+
+        try{
+            logger.setUseParentHandlers(false);
+            fh = new FileHandler("my_application.log");
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+        }catch(Exception e){
+            System.out.println("Logging issue, terminating");
+            return -1;
+        }
+
+
+
         Scanner sc = new Scanner(System.in);
         String val = "";
         //todo: allow manager to select for expenses by category
@@ -31,20 +50,21 @@ public class UserLoop {
                 "\n-G to generate reports on Expense\n-Q to quit");
         val = sc.next();
 
+
         if(val.equalsIgnoreCase("Q")){
-            LOGGER.log(Level.INFO, "Quitting");
+            logger.log(Level.INFO, "Quitting");
             return -1;
 
         } else if (val.equalsIgnoreCase("V")) {
             //ENTER VIEW LOOP
-            LOGGER.log(Level.INFO, "Viewing");
+            logger.log(Level.INFO, "Viewing");
             //TODO: use tablesaw to generate a table and print
             List<Expense> expList = ExpenseService.getPending();
             Table t = UserUtils.TableFromExpense(expList);
             System.out.println(t);
         }
         else if (val.equalsIgnoreCase("X")){
-            LOGGER.log(Level.INFO, "Approving");
+            logger.log(Level.INFO, "Approving");
             List<Expense> expList = null;
             Approval tA = new Approval();
             //ENTER EDIT LOOP
@@ -110,7 +130,7 @@ public class UserLoop {
             //As a manager, I want to generate reports by employee,
             //category, or date so that I can analyze spending trends and make informed decisions.
             List<Expense> expList;
-            LOGGER.log(Level.INFO, "Reporting");
+            logger.info( "Reporting");
             System.out.println("Preparing to Generate Report");
 
 
@@ -148,9 +168,6 @@ public class UserLoop {
                     System.out.println("Preparation failed, returning");
                     return 0;
                 }
-                //TODO: need this shit
-
-
                 System.out.println(UserUtils.TableFromExpense(expList));
                 System.out.println("Average: " + UserUtils.AvgExpense(expList));
 

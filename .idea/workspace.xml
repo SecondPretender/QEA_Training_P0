@@ -5,18 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="687eeee0-363c-45cc-b670-0688d7a14781" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/JavaClient/my_application.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JavaClient/my_application.log.1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JavaClient/my_application.log.1.lck" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JavaClient/my_application.log.2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JavaClient/my_application.log.2.lck" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JavaClient/my_application.log.3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JavaClient/my_application.log.3.lck" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JavaClient/my_application.log.lck" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ClientPython/dbfunc.py" beforeDir="false" afterPath="$PROJECT_DIR$/ClientPython/dbfunc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ClientPython/logdir/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ClientPython/logdir/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ClientPython/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/ClientPython/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/ExpenseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/ExpenseManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/dao/ExpenseDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/dao/ExpenseDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/dao/ExpenseImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/dao/ExpenseImp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/dao/ManagerImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/dao/ManagerImp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/service/ExpenseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/service/ExpenseService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/service/LoginLoop.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/service/LoginLoop.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/service/UserLoop.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/service/UserLoop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/service/UserUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaClient/src/main/java/com/revature/p0/service/UserUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

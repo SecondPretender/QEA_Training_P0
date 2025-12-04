@@ -24,6 +24,6 @@ public class ExpenseService {
 
     public static List<Expense> getByCategory(String cat){
         ExpenseDAO ED = new ExpenseImp();
-        return ED.getCategory();
+        return ED.getCategory(cat);
     }
 }

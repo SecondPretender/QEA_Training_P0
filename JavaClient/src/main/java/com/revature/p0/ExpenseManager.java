@@ -4,10 +4,13 @@ import com.revature.p0.model.Manager;
 import com.revature.p0.service.LoginLoop;
 import com.revature.p0.service.UserLoop;
 import com.revature.p0.utils.ConnectionUtil;
+
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
 import java.sql.*;
+import java.util.logging.SimpleFormatter;
 
 
 /*
@@ -26,11 +29,22 @@ import java.sql.*;
 public class ExpenseManager {
 
 
-    private final static Logger LOGGER = Logger.getLogger(ExpenseManager.class.getName());
-
+    static Logger logger = Logger.getLogger("MyLog");
+    static FileHandler fh;
 
     public static void main(String[] args) {
 //        String DB_PATH = "jdbc:sqlite:../ClientPython/database/expense.db";
+        try{
+            logger.setUseParentHandlers(false);
+            fh = new FileHandler("my_application.log");
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+        }catch(Exception e){
+            System.out.println("Logging issue, terminating");
+            return;
+        }
+
 
 
 
@@ -42,7 +56,7 @@ public class ExpenseManager {
                 do{
                     user = LoginLoop.hi(conn);
                     if(user == null){
-                        LOGGER.log(Level.WARNING, "Login failure");
+                        logger.log(Level.WARNING, "Login failure");
                         System.out.println("Login failed");
                     }
 
@@ -55,7 +69,7 @@ public class ExpenseManager {
                 }while(result != -1);
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "SQL Failure");
+            logger.log(Level.SEVERE, "SQL Failure");
             System.out.println(e.getMessage());
         }
     }
